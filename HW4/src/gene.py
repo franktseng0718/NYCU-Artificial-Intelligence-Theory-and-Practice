@@ -33,10 +33,11 @@ def solvelp():
     print(x)
 def fitness_eval(N, T, b2, pop):
     # Fitness
-    for i in range(N):
-        fit = np.empty([len(pop)])
+    fit = np.empty([len(pop)])
+    for i in range(N):       
         A, B, C, D = gene2coef(pop[i, :])
         fit[i] = np.mean(abs(F2(T, A, B, C, D) - b2))
+    return fit
 
 def gene_algo(N, T, b2, fitness_evaluater):
 

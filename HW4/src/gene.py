@@ -31,13 +31,19 @@ def solvelp():
     x = np.linalg.lstsq(A, b)[0]
 
     print(x)
+def fitness_eval(N, T, b2, pop):
+    # Fitness
+    for i in range(N):
+        fit = np.empty([len(pop)])
+        A, B, C, D = gene2coef(pop[i, :])
+        fit[i] = np.mean(abs(F2(T, A, B, C, D) - b2))
 
-def gene_algo():
+def gene_algo(N, T, b2, fitness_evaluater):
 
-    T = np.random.random((1000, 1))*100
+    #T = np.random.random((1000, 1))*100
     b2 = F2(T, 0.6, 1.2, 100, 0.4)
 
-    N = 10000
+    #N = 10000
     G = 30
     survive_rate = 0.05
     mutation_rate = 0.001
@@ -48,10 +54,9 @@ def gene_algo():
     fit = np.zeros((N, 1))
 
     for generation in range(G):
-        # Fitness
-        for i in range(N):
-            A, B, C, D = gene2coef(pop[i, :])
-            fit[i] = np.mean(abs(F2(T, A, B, C, D) - b2))
+    
+        # fitness
+        fit = fitness_evaluater(N, T, pop, b2)
         
         #selection
         sortf = np.argsort(fit[:, 0])
@@ -73,12 +78,13 @@ def gene_algo():
             n = np.random.randint(0, 40)
             pop[m, n] = 1 - pop[m, n]
 
-    # Fitness
-    for i in range(N):
-        A, B, C, D = gene2coef(pop[i, :])
-        fit[i] = np.mean(abs(F2(T, A, B, C, D) - b2))
+        #fitness
+        fit = fitness_evaluater(N, T, pop, b2)
+    
     sortf = np.argsort(fit[:, 0])
     pop = pop[sortf, :]
-
+    params = np.array([])
     A, B, C, D = gene2coef(pop[0, :])
     print(A, B, C, D)
+    params.append([A, B, C, D])
+    return params
